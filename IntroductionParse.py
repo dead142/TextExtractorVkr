@@ -10,7 +10,7 @@ class Introduction:
 
     __document = {}  # {1: {'text': "Текст страницы"}, 2: {.....}}
 
-    __list_pages_without_introduction = [] # list [index, text]
+    __list_pages_without_introduction = []  # list [index, text]
 
     def __init__(self, file_path=None):
         self.__file_path = file_path
@@ -35,6 +35,7 @@ class Introduction:
                 if isinstance(element, LTTextBox):
                     textPage += element.get_text()
             document[self.__document_pages_count] = {"text": textPage}
+        print("=> PDF convert to Dict")
         return document
 
     def del_pages_before_introduction(self):
@@ -50,35 +51,30 @@ class Introduction:
                 flag = True
             if flag:
                 self.__list_pages_without_introduction.append([key, self.__document[key]["text"]])
-        print("\n =========> delPagesBeforeIntroduction result is: \n", self.__list_pages_without_introduction)
+        print("==> Deleted pageges before \" Оглавление \" ")
         return self.__list_pages_without_introduction
 
     def getPagesWithIntroduction(self):
         """
         :return: dict {"pageWithChapters": list, "pageKeysWithChapters" : [0,1,3]}
         """
-        print("\n =========> getPagesWithIntroduction  BEGIN: \n")
+        print("===> getPagesWithIntroduction  BEGIN:")
         pageKeysWithChapters = []
         pageWithChapters = []
         for key, value in enumerate(self.__list_pages_without_introduction):
             if (value[1].lower().find("введение") != -1 or value[1].lower().find("заключение") != -1) and value[
                 1].lower().find("..") != -1:
                 pageKeysWithChapters.append(key)
-        print("!!!!!!!!!!!!")
-        print(pageKeysWithChapters)
-        print(len(pageKeysWithChapters))
         if len(pageKeysWithChapters) == 1:
             pass
         else:
             pageKeysWithChapters = list(range(pageKeysWithChapters[0], pageKeysWithChapters[-1] + 1))
-        print("\n Numbers pages with introduction : \n")
-        print(pageKeysWithChapters)
+        print("     Numbers pages with introduction : ", pageKeysWithChapters)
         for i in pageKeysWithChapters:
             pageWithChapters.append(self.__list_pages_without_introduction[i][1])
-        print("\n Pages with introduction : \n")
+        print("     Pages with introduction : \n")
         for i in pageWithChapters:
             print(i.split("/n"))
-        print("\n =========> getPagesWithIntroduction  END \n")
         """
         Удвление стрниц с оглавлением из документа
         """
@@ -115,16 +111,15 @@ class Introduction:
         return clear_chapters
 
     def get_content(self, clear_chapters, pageKeysWithChapters, name="введение"):
-        print("\n =========> getContent BEGIN  \n")
-        print(clear_chapters)
+        print("====> getContent BEGIN")
         titles = []
         text = ""
         for key, value in enumerate(clear_chapters):
             if name in value.lower():
                 titles = [value, ''.join([i for i in clear_chapters[key + 1] if not i.isdigit()])]
-        print(titles)
+        print("     Titles for to: ", titles)
         for i in pageKeysWithChapters:
-            print("Page was delete: ", self.__list_pages_without_introduction.pop(0))
+            print("     Pages with introduction was delete: ", self.__list_pages_without_introduction.pop(0))
         for i in self.__list_pages_without_introduction:
             # print(i)
             text = text + i[1]
@@ -132,7 +127,11 @@ class Introduction:
             # text = text.strip('\n')
             #   text = text.strip('\t')
             text = text.replace('\n', "")
-        print(text.find(titles[0]))
-        print(text.find(titles[1]))
+        print("     Pos text begin: ", text.find(titles[0]))
+        print("     Pos text end: ", text.find(titles[1]))
         s = text[text.find(titles[0]): text.find(titles[1])]
-        print(s)
+        print("RESULT: \n ", s)
+        return s
+
+    def __del__(self):  # Деструктор класса
+        print("Вызван метод __del__()")
