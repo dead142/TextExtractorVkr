@@ -4,16 +4,18 @@ from pdfminer.layout import LTTextLine
 
 
 class Introduction:
-    __document_pages_count = 0
 
-    __file_path = ""
 
-    __document = {}  # {1: {'text': "Текст страницы"}, 2: {.....}}
 
-    __list_pages_without_introduction = []  # list [index, text]
+
+
+
+
 
     def __init__(self, file_path=None):
+        self.__list_pages_without_introduction = []  # list [index, text]
         self.__file_path = file_path
+        self.__document_pages_count = 0
         self.__document = self.pdf_to_dict()
         self.__list_pages_without_introduction = self.del_pages_before_introduction()
 
