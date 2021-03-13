@@ -1,3 +1,4 @@
 cryptography==2.8 #sometimes need for windows 10
 pdfminer.six
 pandas
+tqdm
